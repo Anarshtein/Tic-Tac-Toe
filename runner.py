@@ -36,16 +36,16 @@ while True:
 
     screen.fill(black)
 
-    # Let user choose a player.
+    # Let user choose a player if not chosen yet.
     if user is None:
 
-        # Draw title
+        # Draw title at the top of the window
         title = largeFont.render("Play Tic-Tac-Toe", True, white)
         titleRect = title.get_rect()
         titleRect.center = ((width / 2), 50)
         screen.blit(title, titleRect)
 
-        # Draw buttons
+        # Adding button for choosing player X
         playXButton = pygame.Rect((width / 8), (height / 2), width / 4, 50)
         playX = mediumFont.render("Play as X", True, black)
         playXRect = playX.get_rect()
@@ -53,6 +53,7 @@ while True:
         pygame.draw.rect(screen, white, playXButton)
         screen.blit(playX, playXRect)
 
+        # Adding button for choosing player O
         playOButton = pygame.Rect(5 * (width / 8), (height / 2), width / 4, 50)
         playO = mediumFont.render("Play as O", True, black)
         playORect = playO.get_rect()
@@ -61,15 +62,15 @@ while True:
         screen.blit(playO, playORect)
 
         # Check if button is clicked
-        click, _, _ = pygame.mouse.get_pressed()
-        if click == 1:
-            mouse = pygame.mouse.get_pos()
-            if playXButton.collidepoint(mouse):
-                time.sleep(0.2)
-                user = ttt.X
-            elif playOButton.collidepoint(mouse):
-                time.sleep(0.2)
-                user = ttt.O
+        click, _, _ = pygame.mouse.get_pressed() # For detecting mouse click
+        if click == 1: # If mouse if clicked
+            mouse = pygame.mouse.get_pos() # Determining the position of the mouse
+            if playXButton.collidepoint(mouse): # Determining if clicked button is for X
+                time.sleep(0.2) # Adding sleep time to overcome doubleclick
+                user = ttt.X # Assigning user to be X
+            elif playOButton.collidepoint(mouse): # Determining if clicked button is for X
+                time.sleep(0.2) # Adding sleep time to overcome doubleclick
+                user = ttt.O # Assigning user to be O
 
     else:
 
@@ -78,9 +79,10 @@ while True:
         tile_origin = (width / 2 - (1.5 * tile_size),
                        height / 2 - (1.5 * tile_size))
         tiles = []
-        for i in range(3):
+        for i in range(3): # Looping over rows
             row = []
-            for j in range(3):
+            for j in range(3): # Looping over columns
+                # Creating rectangles
                 rect = pygame.Rect(
                     tile_origin[0] + j * tile_size,
                     tile_origin[1] + i * tile_size,
@@ -88,16 +90,17 @@ while True:
                 )
                 pygame.draw.rect(screen, white, rect, 3)
 
+
                 if board[i][j] != ttt.EMPTY:
-                    move = moveFont.render(board[i][j], True, white)
+                    move = moveFont.render(board[i][j], True, white) # Getting X or O
                     moveRect = move.get_rect()
-                    moveRect.center = rect.center
-                    screen.blit(move, moveRect)
+                    moveRect.center = rect.center # Centering the move in the cell 
+                    screen.blit(move, moveRect) # Displaying
                 row.append(rect)
             tiles.append(row)
 
-        game_over = ttt.terminal(board)
-        player = ttt.player(board)
+        game_over = ttt.terminal(board) # Checking if the game ended
+        player = ttt.player(board) # Determining which player's turn it is
 
         # Show title
         if game_over:
@@ -119,20 +122,21 @@ while True:
         if user != player and not game_over:
             if ai_turn:
                 time.sleep(0.5)
-                move = ttt.minimax(board)
-                board = ttt.result(board, move)
-                ai_turn = False
+                move = ttt.minimax(board) # Getting the best move for AI by calling minimax() function
+                board = ttt.result(board, move) # Add the move to board
+                ai_turn = False # Reseting 
             else:
                 ai_turn = True
 
         # Check for a user move
-        click, _, _ = pygame.mouse.get_pressed()
+        click, _, _ = pygame.mouse.get_pressed() 
         if click == 1 and user == player and not game_over:
             mouse = pygame.mouse.get_pos()
             for i in range(3):
                 for j in range(3):
+                    # Checking if the clicked cell is empty
                     if (board[i][j] == ttt.EMPTY and tiles[i][j].collidepoint(mouse)):
-                        board = ttt.result(board, (i, j))
+                        board = ttt.result(board, (i, j)) # Add user's move to corresponding cell of the board
 
         if game_over:
             againButton = pygame.Rect(width / 3, height - 65, width / 3, 50)
